@@ -38,35 +38,65 @@ function dec(item, index) {
 }
 
 function onSubmit() {
-  var url = '/search/'.concat(this.search);
-  console.log('onSubmit', url);
+  if (this.newSearch.length) {
+    var url = '/search/'.concat(this.newSearch);
+    this.loading = true;
+    this.items = [];
+    this.$http.get(url).then(
+      function(res) {
+        var items = res.data.map(x => {
+          x.price = 9.99;
+          return x;
+        });
+        this.results = items;
+        this.appendItems();
+        this.lastSearch = this.newSearch;
+        this.newSearch = '';
+        this.loading = false;
+      },
+      function(e) {
+        console.log('failure');
+        console.error(e);
+      }
+    );
+  }
+}
 
-  console.log('http', this.$http);
-  this.$http.get(url).then(
-    function(res) {
-      console.log('success');
-      console.log(res);
-    },
-    function(e) {
-      console.log('failure');
-      console.error(e);
-    }
-  );
+function mounted() {
+  this.onSubmit();
+  var vueInstance = this;
+
+  var elem = document.getElementById('product-list-bottom');
+  var watcher = scrollMonitor.create(elem);
+  watcher.enterViewport(function() {
+    vueInstance.appendItems();
+  });
+}
+
+function appendItems() {
+  if (this.items.length < this.results.length) {
+    var append = this.results.slice(this.items.length, this.items.length + 10);
+    this.items = this.items.concat(append);
+  }
+}
+
+function noMoreItems() {
+  return this.items.length === this.results.length && this.results.length > 0;
 }
 
 var app = new Vue({
   el: '#app',
   data: {
     total: 0,
-    items: [
-      { id: 10, title: 'Item 1', price: 9.99 },
-      { id: 20, title: 'Item 2', price: 2.5 },
-      { id: 30, title: 'Item 3', price: 3.75 }
-    ],
+    items: [],
+    results: [],
     cart: [],
-    search: ''
+    newSearch: '1980',
+    lastSearch: '',
+    loading: false
   },
   methods: {
+    appendItems: appendItems,
     addItem: addItem,
     inc: inc,
     dec: dec,
@@ -74,5 +104,9 @@ var app = new Vue({
   },
   filters: {
     currency: currency
+  },
+  mounted: mounted,
+  computed: {
+    noMoreItems: noMoreItems
   }
 });

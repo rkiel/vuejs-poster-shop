@@ -4,12 +4,17 @@
   "description": "Ultimate Vue.js Developers Course",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./index.js --ignore node_modules/ -e js,html,css"
+    "start": "nodemon ./index.js --ignore node_modules/ -e js,html,css",
+    "pre-commit-eslint": "eslint .",
+    "p":
+      "prettier --single-quote --jsx-bracket-same-line --write \"!(build|node_modules)/**/*.js\" \"*.js\" \"!(build|node_modules)/**/*.json\" \"*.json\"",
+    "pre-commit-prettier":
+      "prettier --single-quote --jsx-bracket-same-line --list-different \"!(build|node_modules)/**/*.js\" \"*.js\" \"!(build|node_modules)/**/*.json\" \"*.json\""
   },
   "author": "Anthony Gore <info@getjsdojo.com>",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/vuejsdevelopers/vuejs-poster-shop"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vuejsdevelopers/vuejs-poster-shop"
   },
   "license": "UNLICENSED",
   "dependencies": {
@@ -23,7 +28,15 @@
     "vue-resource": "^1.0.3"
   },
   "devDependencies": {
+    "eslint": "^4.11.0",
+    "eslint-config-react-app": "^2.0.1",
+    "eslint-plugin-jest": "^21.3.2",
+    "eslint-plugin-react": "^7.4.0",
     "nodemon": "^1.11.0",
+    "pre-commit": "^1.2.2",
+    "prettier": "^1.8.2",
     "reload": "^1.1.0"
-  }
+  },
+
+  "pre-commit": ["pre-commit-prettier", "pre-commit-eslint"]
 }
